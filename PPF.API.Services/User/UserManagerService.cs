@@ -12,10 +12,28 @@ namespace PPF.API.Services.User
     public class UserManagerService : IUserManagerService
     {
         IUserService _userService;
+        private const string DefaultIdentityProviderClaimValue = "PPF identity";
         public UserManagerService(IUserService userService)
         {
             _userService = userService;
+
+            RoleClaimType = ClaimsIdentity.DefaultRoleClaimType;
+            UserIdClaimType = ClaimTypes.NameIdentifier;
+            UserNameClaimType = ClaimsIdentity.DefaultNameClaimType;
+            SecurityStampClaimType = "AspNet.Identity.SecurityStamp";
+            IdentityProviderClaimType = "http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider";
         }
+        
+
+        public string IdentityProviderClaimType { get; private set; }
+
+        public string RoleClaimType { get; private set; }
+        
+        public string UserNameClaimType { get; private set; }
+
+        public string UserIdClaimType { get; private set; }
+        
+        public string SecurityStampClaimType { get; private set; }
 
         public IUserService UserService { get { return _userService; } }
 
@@ -36,15 +54,31 @@ namespace PPF.API.Services.User
             return new Op<Member>(user.Data);
         }
 
-
-        public async Task<Op<ClaimsIdentity>> GenerateUserIdentityAsync(Member data, string authenticationType)
+        public async Task<Op<Member>> FindByNameAsync(string audienceId)
         {
-            var claims = await _userService.FindUserClaimsAsync(data, authenticationType);
+            Op<Member> user = await _userService.FindUserByNameAsync(audienceId);
+            if (user.Data == null)
+                return new Op<Member>("Invalid User Name", 400, null);
+            return new Op<Member>(user.Data);
+        }
 
-            var claimList = claims.Data.ToList();
-            claimList.Add(new Claim(ClaimTypes.NameIdentifier, data.UserName));
+        public async Task<Op<ClaimsIdentity>> GenerateUserIdentityAsync(Member user, string authenticationType)
+        {
+            ClaimsIdentity identity = new ClaimsIdentity(authenticationType, UserIdClaimType, RoleClaimType);
+            identity.AddClaim(new Claim(UserIdClaimType, user.Id.ToString(), ClaimValueTypes.String));
+            identity.AddClaim(new Claim(UserNameClaimType, user.UserName, ClaimValueTypes.String));
+            identity.AddClaim(new Claim(IdentityProviderClaimType, DefaultIdentityProviderClaimValue, ClaimValueTypes.String));
 
-            ClaimsIdentity identity = new ClaimsIdentity(claimList, authenticationType);
+            // Adding User Claims
+            var userClaims = await _userService.FindUserClaimsAsync(user, authenticationType);
+            identity.AddClaims(userClaims.Data);
+
+            // If your DB design still have UserRole Table you can use this part. Fundamentally with new .net Role are converted into Claim
+            var userRoles = await _userService.FindUserRolesAsync(user);
+            identity.AddClaims(userRoles.Data.Select(r => new Claim(RoleClaimType, r.Name)));
+
+            var userSecurityStamp = await _userService.GetSecurityStampAsync(user);
+            identity.AddClaim(new Claim(SecurityStampClaimType, userSecurityStamp.Data));
 
             return new Op<ClaimsIdentity>(identity);
         }
@@ -62,6 +96,7 @@ namespace PPF.API.Services.User
             return result;
         }
 
+       
     }
 
 

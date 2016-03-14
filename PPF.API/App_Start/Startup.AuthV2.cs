@@ -43,6 +43,8 @@ namespace PPF.API
                 AccessTokenExpireTimeSpan = TimeSpan.FromHours(5),
                 // In production mode set AllowInsecureHttp = false
                 AllowInsecureHttp = true,
+                RefreshTokenProvider  = new RefreshTokenProvider(),
+                //AccessTokenFormat = new JwtFormat("http://identityserver.v2.thinktecture.com/trust/changethis")
             };
 
             // Enable the application to use bearer tokens to authenticate users

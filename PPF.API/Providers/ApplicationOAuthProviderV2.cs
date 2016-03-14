@@ -12,6 +12,7 @@ using PPF.API.Models;
 using PPF.API.Services.User;
 using PPF.Models;
 using Microsoft.Owin;
+using PPF.API.Services;
 
 namespace PPF.API.Providers
 {
@@ -27,6 +28,17 @@ namespace PPF.API.Providers
             }
 
             _publicClientId = publicClientId;
+        }
+
+        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+        {
+            // Resource owner password credentials does not provide a client ID.
+            if (context.ClientId == null)
+            {
+                context.Validated();
+            }
+
+            return Task.FromResult<object>(null);
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
@@ -52,8 +64,7 @@ namespace PPF.API.Providers
             context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);
         }
-
-
+        
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)
         {
             foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
@@ -63,17 +74,7 @@ namespace PPF.API.Providers
 
             return Task.FromResult<object>(null);
         }
-
-        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
-        {
-            // Resource owner password credentials does not provide a client ID.
-            if (context.ClientId == null)
-            {
-                context.Validated();
-            }
-
-            return Task.FromResult<object>(null);
-        }
+                
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
@@ -98,16 +99,17 @@ namespace PPF.API.Providers
             };
             return new AuthenticationProperties(data);
         }
+                
 
     }
 
 
     public static class OwinExtensions
     {
-        public static UserManagerService GetUserManagerV2(this IOwinContext context)
+        public static IUserManagerService GetUserManagerV2(this IOwinContext context)
         {
-            var userService = context.Get<ServiceFactory>().GetService<UserService>();
-            var userManagerService = new UserManagerService(userService);
+            var gate = context.Get<ServiceFactory>().GetService<IGate>();
+            var userManagerService = gate.UserModule.UserManagerService;
             return userManagerService;
         }
 

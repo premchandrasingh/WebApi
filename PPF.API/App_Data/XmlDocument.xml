@@ -708,5 +708,17 @@
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:PPF.API.Helper.ConvertCase.To(System.String,PPF.API.Helper.ConvertCase.Case,System.Char[])" -->
+        <member name="T:PPF.API.Providers.JwtFormat">
+            <summary>
+            Application Json Web Token formatter
+            </summary>
+        </member>
+        <member name="T:PPF.API.Providers.RefreshTokenProvider">
+            <summary>
+            Refresh token provider
+            Good article: http://bitoftech.net/2014/07/16/enable-oauth-refresh-tokens-angularjs-app-using-asp-net-web-api-2-owin/
+            Good explaination: http://stackoverflow.com/questions/20637674/owin-security-how-to-implement-oauth2-refresh-tokens
+            </summary>
+        </member>
     </members>
 </doc>

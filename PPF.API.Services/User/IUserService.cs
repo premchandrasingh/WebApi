@@ -12,5 +12,7 @@ namespace PPF.API.Services.User
         Task<Op<IEnumerable<Claim>>> FindUserClaimsAsync(Member data, string authenticationType);
         Task<Op<int>> IncrementAccessFailedCountAsync(Member user);
         Task<Op<bool>> UpdateSecurityStampInternalAsync(Member user);
+        Task<Op<IEnumerable<Role>>> FindUserRolesAsync(Member user);
+        Task<Op<string>> GetSecurityStampAsync(Member user);
     }
 }

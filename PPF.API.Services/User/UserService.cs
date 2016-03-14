@@ -40,6 +40,14 @@ namespace PPF.API.Services.User
             return Task.FromResult(new Op<IEnumerable<Claim>>(claims));
         }
 
+        public Task<Op<IEnumerable<Role>>> FindUserRolesAsync(Member user)
+        {
+            IEnumerable<Role> roles = new List<Role>() {
+                new Role() { UserId = user.Id, Id = 1, Name = "User"  }
+            };
+            return Task.FromResult(new Op<IEnumerable<Role>>(roles));
+        }
+
         public async Task<Op<bool>> UpdateSecurityStampInternalAsync(Member user)
         {
             // Update Security time stamp like Guid.NewGuid()
@@ -50,6 +58,11 @@ namespace PPF.API.Services.User
         {
             user.Id = (new Random()).Next();
             return new Op<Member>(user);
+        }
+
+        public async Task<Op<string>> GetSecurityStampAsync(Member user)
+        {
+            return new Op<string>(data:Guid.NewGuid().ToString());
         }
     }
 

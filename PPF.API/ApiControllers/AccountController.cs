@@ -34,8 +34,13 @@ namespace PPF.API.Controllers
         {
 
         }
-        
-        
+
+        [Route("Test", Name = "Test")] 
+        public IHttpActionResult Test()
+        {
+            return Ok("Test successful");
+        }
+
         // POST api/Account/Register
         [AllowAnonymous]
         [Route("RegisterV2")]

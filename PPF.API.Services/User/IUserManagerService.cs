@@ -8,8 +8,14 @@ namespace PPF.API.Services.User
     {
         IUserService UserService { get; }
 
+        string RoleClaimType { get; }
+        string UserNameClaimType { get; }
+        string UserIdClaimType { get; }
+        string SecurityStampClaimType { get; }
+
         Task<Op<Member>> CreateAsync(Member user, string password);
         Task<Op<Member>> FindAsync(string userName, string password);
         Task<Op<ClaimsIdentity>> GenerateUserIdentityAsync(Member data, string authenticationType);
+        Task<Op<Member>> FindByNameAsync(string audienceId);
     }
 }
