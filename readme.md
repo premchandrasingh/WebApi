@@ -5,9 +5,9 @@ A random name while starting this sample. It stands for Past Present Future (PPF
 
 ---
 This sample does not have a database, instead have some hard coded users for testing.	
-username:  prem1 ....................... Password: 1234	
-username:  prem2 ....................... Password: 1234	
-username:  prem3 ....................... Password: 1234	
+username:  prem1 ....................... Password: 1234   
+username:  prem2 ....................... Password: 1234   	
+username:  prem3 ....................... Password: 1234   	
 
 ---
 **Test 1 *(Get access token by username & password)*:**	
