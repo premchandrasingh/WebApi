@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataHandler.Encoder;
+using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
@@ -18,59 +19,45 @@ namespace PPF.API.Providers
     /// </summary>
     public class JwtFormat : ISecureDataFormat<AuthenticationTicket>
     {
-        private const string AudiencePropertyKey = "userName";
+        private readonly string _audience = string.Empty;
 
         private readonly string _issuer = string.Empty;
 
-        public JwtFormat(string issuer)
+        private readonly int _expiryTimeInMinutes =0;
+
+        private readonly string _key = string.Empty;
+
+        public JwtFormat(string key, string issuer, string audience, int expiryTimeInMinutes)
         {
+            _key = key;
             _issuer = issuer;
+            _audience = audience;
+            _expiryTimeInMinutes = expiryTimeInMinutes;
+
         }
+        
+        public string SignatureAlgorithm {  get { return "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256"; } }
+
+        public string DigestAlgorithm  { get { return "http://www.w3.org/2001/04/xmlenc#sha256"; } }
 
         public string Protect(AuthenticationTicket data)
         {
-            if (data == null)
-            {
-                throw new ArgumentNullException("data");
-            }
-            
-            string audienceId = data.Properties.Dictionary.ContainsKey(AudiencePropertyKey) ? data.Properties.Dictionary[AudiencePropertyKey] : null;
+            if (data == null) throw new ArgumentNullException("data");
+            var now = DateTime.UtcNow;
+            var expires = now.AddMinutes(_expiryTimeInMinutes);
+            var keyArr = Microsoft.Owin.Security.DataHandler.Encoder.TextEncodings.Base64Url.Decode(_key);
 
-            if (string.IsNullOrWhiteSpace(audienceId))
-                throw new InvalidOperationException("AuthenticationTicket.Properties does not include audience");
+            var signingCredentials = new SigningCredentials(
+                                        new InMemorySymmetricSecurityKey(keyArr), // DO not use InMemorySymmetricSecurityKey for Production. Use X509SecurityKey class
+                                        SignatureAlgorithm,
+                                        DigestAlgorithm);
+            var token = new JwtSecurityToken(_issuer, _audience, data.Identity.Claims, now, expires, signingCredentials);
 
-            var userManager = HttpContext.Current.Request.GetOwinContext().GetUserManagerV2();
-            var user = userManager.FindByNameAsync(audienceId).Result.Data;
-
-
-            string symmetricKeyAsBase64 = user.Password;
-
-            var keyByteArray = TextEncodings.Base64Url.Decode(symmetricKeyAsBase64);
-
-            //using (HMACSHA1 hmac = new HMACSHA1(Encoding.UTF8.GetBytes("Secret key")))
-            //{
-            //    calculatedSignature = ByteToString(hmac.ComputeHash(Encoding.UTF8.GetBytes(requestToken)));
-            //}
-
-            HmacSigningCredentials signingKey = new HmacSigningCredentials(keyByteArray);
-
-            var issued = data.Properties.IssuedUtc;
-            var expires = data.Properties.ExpiresUtc;
-
-            JwtSecurityToken token = new JwtSecurityToken(_issuer, audienceId, data.Identity.Claims, issued.Value.UtcDateTime, expires.Value.UtcDateTime, signingKey);
-
-            var handler = new JwtSecurityTokenHandler();
-
-            var jwt = handler.WriteToken(token);
-
-            return jwt;
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private string ByteToString(IEnumerable<byte> data)
-        {
-            return string.Concat(data.Select(b => b.ToString("x2")));
-        }
-
+        // OAuth server never uses the Unprotect method
+        // Unprotect seems like it would be useful when verifying  a token, but that’s just not how these components work
         public AuthenticationTicket Unprotect(string protectedText)
         {
             throw new NotImplementedException();

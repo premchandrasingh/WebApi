@@ -16,11 +16,11 @@ using PPF.API.Services;
 
 namespace PPF.API.Providers
 {
-    public class ApplicationOAuthProviderV2 : OAuthAuthorizationServerProvider
+    public class OAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
 
-        public ApplicationOAuthProviderV2(string publicClientId)
+        public OAuthProvider(string publicClientId)
         {
             if (publicClientId == null)
             {
@@ -29,7 +29,16 @@ namespace PPF.API.Providers
 
             _publicClientId = publicClientId;
         }
-
+        /// <summary>
+        /// The ValidateClientAuthentication method is the place where you’ll make calls to a database or membership 
+        /// system to determine if a user is providing the correct credentials. If so, the method will add data into
+        /// the OWIN request context for GrantResourceOwnerCredentials to pick up and place into claims 
+        /// (which ultimately become part of the auth ticket)
+        /// 
+        /// context.Validated(); method will do above task for you
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             // Resource owner password credentials does not provide a client ID.
@@ -55,7 +64,7 @@ namespace PPF.API.Providers
             }
 
             Op<ClaimsIdentity> oAuthIdentityResult = await userManagerService.GenerateUserIdentityAsync(user.Data, OAuthDefaults.AuthenticationType);
-            Op<ClaimsIdentity> cookiesIdentityResult = await userManagerService.GenerateUserIdentityAsync(user.Data, OAuthDefaults.AuthenticationType);
+            Op<ClaimsIdentity> cookiesIdentityResult = await userManagerService.GenerateUserIdentityAsync(user.Data, CookieAuthenticationDefaults.AuthenticationType);
             ClaimsIdentity oAuthIdentity = oAuthIdentityResult.Data;
             ClaimsIdentity cookiesIdentity = cookiesIdentityResult.Data;
 

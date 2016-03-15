@@ -708,6 +708,23 @@
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:PPF.API.Helper.ConvertCase.To(System.String,PPF.API.Helper.ConvertCase.Case,System.Char[])" -->
+        <member name="M:PPF.API.Providers.OAuthProvider.ValidateClientAuthentication(Microsoft.Owin.Security.OAuth.OAuthValidateClientAuthenticationContext)">
+            <summary>
+            The ValidateClientAuthentication method is the place where you’ll make calls to a database or membership 
+            system to determine if a user is providing the correct credentials. If so, the method will add data into
+            the OWIN request context for GrantResourceOwnerCredentials to pick up and place into claims 
+            (which ultimately become part of the auth ticket)
+            
+            context.Validated(); method will do above task for you
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="T:PPF.API.Providers.JwtFormatV2">
+            <summary>
+            Application Json Web Token formatter
+            </summary>
+        </member>
         <member name="T:PPF.API.Providers.JwtFormat">
             <summary>
             Application Json Web Token formatter
