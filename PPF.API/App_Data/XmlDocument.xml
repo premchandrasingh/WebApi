@@ -9,6 +9,11 @@
             Base api controller
             </summary>
         </member>
+        <member name="T:PPF.API.ApiControllers.ExternalLoginsController">
+            <summary>
+            Externals Login providers
+            </summary>
+        </member>
         <member name="M:PPF.API.ErrorConfig.Configure(System.Web.Http.HttpConfiguration)">
             <summary>
             Configure Api Exception configuration
@@ -728,6 +733,7 @@
         <member name="T:PPF.API.Providers.JwtFormat">
             <summary>
             Application Json Web Token formatter
+            http://odetocode.com/blogs/scott/archive/2015/01/15/using-json-web-tokens-with-katana-and-webapi.aspx
             </summary>
         </member>
         <member name="T:PPF.API.Providers.RefreshTokenProvider">

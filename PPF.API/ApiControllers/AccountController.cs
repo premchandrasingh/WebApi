@@ -35,10 +35,28 @@ namespace PPF.API.Controllers
 
         }
 
-        [Route("Test", Name = "Test")] 
+        private string MakesureTableExist(string tableName)
+        {
+            var path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+            path = path.Replace("file:///", "");
+            var directory = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), "Data");
+            if (!System.IO.Directory.Exists(directory))
+                System.IO.Directory.CreateDirectory(directory);
+
+            var file = System.IO.Path.Combine(directory, string.Format("{0}.table.json", tableName));
+            if (!System.IO.File.Exists(file))
+                System.IO.File.Create(file);
+
+            return path;
+        }
+
+        [AllowAnonymous]
+        [Route("Test", Name = "Test")]
         public IHttpActionResult Test()
         {
-            return Ok("Test successful");
+            var s = MakesureTableExist("dfdf");
+
+            return Ok(s);
         }
 
         // POST api/Account/Register
@@ -53,7 +71,8 @@ namespace PPF.API.Controllers
             //    return BadRequest(ModelState);
             //}
 
-            var user = new Member() { UserName = model.Email, Email = model.Email };
+            var user = new Member() { UserName = model.Email, Email = model.Email, Password = model.Password, IsExternal = false };
+
 
             var result = await Gate.UserModule.UserManagerService.CreateAsync(user, model.Password);
 
@@ -64,6 +83,8 @@ namespace PPF.API.Controllers
 
             return Ok(result.Data);
         }
+
+
 
     }
 }

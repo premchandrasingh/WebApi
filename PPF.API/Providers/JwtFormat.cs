@@ -16,6 +16,7 @@ namespace PPF.API.Providers
 
     /// <summary>
     /// Application Json Web Token formatter
+    /// http://odetocode.com/blogs/scott/archive/2015/01/15/using-json-web-tokens-with-katana-and-webapi.aspx
     /// </summary>
     public class JwtFormat : ISecureDataFormat<AuthenticationTicket>
     {
@@ -46,6 +47,10 @@ namespace PPF.API.Providers
             var now = DateTime.UtcNow;
             var expires = now.AddMinutes(_expiryTimeInMinutes);
             var keyArr = Microsoft.Owin.Security.DataHandler.Encoder.TextEncodings.Base64Url.Decode(_key);
+
+            //var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2();
+            //var cert = new X509SecurityKey(certificate);
+            
 
             var signingCredentials = new SigningCredentials(
                                         new InMemorySymmetricSecurityKey(keyArr), // DO not use InMemorySymmetricSecurityKey for Production. Use X509SecurityKey class

@@ -23,21 +23,21 @@ namespace PPF.API.Services.User
             SecurityStampClaimType = "AspNet.Identity.SecurityStamp";
             IdentityProviderClaimType = "http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider";
         }
-        
+
 
         public string IdentityProviderClaimType { get; private set; }
 
         public string RoleClaimType { get; private set; }
-        
+
         public string UserNameClaimType { get; private set; }
 
         public string UserIdClaimType { get; private set; }
-        
+
         public string SecurityStampClaimType { get; private set; }
 
         public IUserService UserService { get { return _userService; } }
 
-     
+
         public async Task<Op<Member>> FindAsync(string userName, string password)
         {
             Op<Member> user = await _userService.FindUserByNameAsync(userName);
@@ -52,6 +52,13 @@ namespace PPF.API.Services.User
             }
 
             return new Op<Member>(user.Data);
+        }
+
+        public async Task<Op<Member>> FindAsync(ExternalUserLoginInfo userloginInfo)
+        {
+
+            Op<Member> user = await _userService.FindUserExternalLoginInfoAsync(userloginInfo);
+            return user;
         }
 
         public async Task<Op<Member>> FindByNameAsync(string audienceId)
@@ -87,16 +94,34 @@ namespace PPF.API.Services.User
         {
             await _userService.UpdateSecurityStampInternalAsync(user);
 
-           var valOp = UserValidator.Validate(user.UserName, password);
+            var valOp = UserValidator.Validate(user.UserName, password);
             if (!valOp.Succeeded)
                 return new Op<Member>(valOp.Meta.Message, valOp.Meta.Code, null);
+
+            var oldResult = await _userService.FindUserByNameAsync(user.UserName);
+
+            if (oldResult.Data != null)
+                return new Op<Member>("User name already taken", 400, null);
 
             var result = await _userService.CreateAsync(user);
 
             return result;
         }
 
-       
+        public async Task<Op<Member>> CreateExternalLoginAsync(ExternalLogin externalUser, Member user)
+        {
+            await _userService.UpdateSecurityStampInternalAsync(user);
+
+            var oldResult = await _userService.FindUserByNameAsync(user.UserName);
+
+            if (oldResult.Data != null)
+                return new Op<Member>("User name already taken", 400, null);
+
+            Op<Member> result = await _userService.CreateExternalLoginAsync(externalUser, user);
+
+            return result;
+        }
+
     }
 
 
@@ -123,7 +148,7 @@ namespace PPF.API.Services.User
             { "[@#$%^&*()_!]", "Password should contain an special character"},
         };
 
-       private static Dictionary<string, string> passwordInValidPatterns = new Dictionary<string, string>() {
+        private static Dictionary<string, string> passwordInValidPatterns = new Dictionary<string, string>() {
             { "[<>/?\\|+=~`;'\"]", "Invalid special character"},
         };
 

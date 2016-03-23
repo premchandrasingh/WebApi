@@ -15,7 +15,12 @@ namespace PPF.API.Services.User
 
         Task<Op<Member>> CreateAsync(Member user, string password);
         Task<Op<Member>> FindAsync(string userName, string password);
+        Task<Op<Member>> FindAsync(ExternalUserLoginInfo userloginInfo);
+
+
+
         Task<Op<ClaimsIdentity>> GenerateUserIdentityAsync(Member data, string authenticationType);
         Task<Op<Member>> FindByNameAsync(string audienceId);
+        Task<Op<Member>> CreateExternalLoginAsync(ExternalLogin externalLogin, Member member);
     }
 }

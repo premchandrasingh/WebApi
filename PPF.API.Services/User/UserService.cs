@@ -1,4 +1,5 @@
-﻿using PPF.Models;
+﻿using PPF.API.Repositories;
+using PPF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,12 @@ namespace PPF.API.Services.User
             new Member() { Id = 5, UserName = "Prem5", Password ="1234", FirstName ="Prem5", LastName ="Singh", Email ="prem@email.com" }
         };
 
+        IUserRepository _userRepo;
+        public UserService()
+        {
+            _userRepo = new UserRepository();
+        }
+
         public async Task<Op<int>> IncrementAccessFailedCountAsync(Member user)
         {
             return new Op<int>(2);
@@ -26,10 +33,16 @@ namespace PPF.API.Services.User
 
         public Task<Op<Member>> FindUserByNameAsync(string userName)
         {
-            var user = _members.FirstOrDefault(u => u.UserName.ToLower() == userName.ToLower());
+            //var user = _members.FirstOrDefault(u => u.UserName.ToLower() == userName.ToLower());
+            var user = _userRepo.FindUserByName(userName).Data;
             return Task.FromResult(new Op<Member>(user));
         }
 
+        public Task<Op<Member>> FindUserExternalLoginInfoAsync(ExternalUserLoginInfo userloginInfo)
+        {
+            var res = _userRepo.FindUserExternalLoginInfoAsync(userloginInfo);
+            return Task.FromResult(res);
+        }
 
         public Task<Op<IEnumerable<Claim>>> FindUserClaimsAsync(Member data, string authenticationType)
         {
@@ -56,14 +69,29 @@ namespace PPF.API.Services.User
 
         public async Task<Op<Member>> CreateAsync(Member user)
         {
+
             user.Id = (new Random()).Next();
+            var res =  _userRepo.CreateUser(user);
+            
+            return new Op<Member>(user);
+        }
+
+        public async Task<Op<Member>> CreateExternalLoginAsync(ExternalLogin externalUser, Member user)
+        {
+            user.Id = (new Random()).Next();
+            var mem = _userRepo.CreateUser(user);
+
+            externalUser.UserId = user.Id;
+            var res = _userRepo.CreateExternalUser(externalUser);
             return new Op<Member>(user);
         }
 
         public async Task<Op<string>> GetSecurityStampAsync(Member user)
         {
-            return new Op<string>(data:Guid.NewGuid().ToString());
+            return new Op<string>(data: Guid.NewGuid().ToString());
         }
+
+       
     }
 
 }

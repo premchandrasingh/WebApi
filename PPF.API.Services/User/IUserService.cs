@@ -14,5 +14,7 @@ namespace PPF.API.Services.User
         Task<Op<bool>> UpdateSecurityStampInternalAsync(Member user);
         Task<Op<IEnumerable<Role>>> FindUserRolesAsync(Member user);
         Task<Op<string>> GetSecurityStampAsync(Member user);
+        Task<Op<Member>> FindUserExternalLoginInfoAsync(ExternalUserLoginInfo userloginInfo);
+        Task<Op<Member>> CreateExternalLoginAsync(ExternalLogin externalUser, Member user);
     }
 }

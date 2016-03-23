@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 691237391,
+    "UserName": "prem@email.com",
+    "Password": "Prem@123",
+    "SecurityStamp": null,
+    "FirstName": null,
+    "LastName": null,
+    "Email": "prem@email.com",
+    "IsExternal": false
+  },
+  {
+    "Id": 6980237391,
+    "UserName": "prem1@email.com",
+    "Password": "Prem@123",
+    "SecurityStamp": null,
+    "FirstName": null,
+    "LastName": null,
+    "Email": "prem1@email.com",
+    "IsExternal": false
+  },
+  {
+    "Id": 698047391,
+    "UserName": "prem2@email.com",
+    "Password": "Prem@123",
+    "SecurityStamp": null,
+    "FirstName": null,
+    "LastName": null,
+    "Email": "prem2@email.com",
+    "IsExternal": false
+  },
+  {
+    "Id": 542279766,
+    "UserName": "prem11@email.com",
+    "Password": "Prem@123",
+    "SecurityStamp": null,
+    "FirstName": null,
+    "LastName": null,
+    "Email": "prem11@email.com",
+    "IsExternal": false
+  },
+  {
+    "Id": 1583564856,
+    "UserName": "love@email.com",
+    "Password": "Prem@123",
+    "SecurityStamp": null,
+    "FirstName": null,
+    "LastName": null,
+    "Email": "love@email.com",
+    "IsExternal": false
+  },
+  {
+    "Id": 1188371426,
+    "UserName": "mohabat@email.com",
+    "Password": "Prem@123",
+    "SecurityStamp": null,
+    "FirstName": null,
+    "LastName": null,
+    "Email": "mohabat@email.com",
+    "IsExternal": false
+  },
+  {
+    "Id": 831948413,
+    "UserName": "l.premchandra@thinksys.com",
+    "Password": null,
+    "SecurityStamp": null,
+    "FirstName": "Premchandra",
+    "LastName": "Leishangthem",
+    "Email": "l.premchandra@thinksys.com",
+    "IsExternal": true
+  },
+  {
+    "Id": 2008564217,
+    "UserName": null,
+    "Password": null,
+    "SecurityStamp": null,
+    "FirstName": null,
+    "LastName": null,
+    "Email": null,
+    "IsExternal": true
+  }
+]

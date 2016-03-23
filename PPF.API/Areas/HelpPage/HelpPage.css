@@ -96,7 +96,7 @@
 
 .api-name .api-method-large
 {
-    font-size:30px;
+    font-size:24px;
 }
 .api-name .api-relativepath{
     color:#90a959;
@@ -104,7 +104,7 @@
     font-weight:bold;
 }
 .api-name .api-relativepath-large{
-    font-size:23px;
+    font-size:18px;
 }
 
 .help-page .api-documentation {

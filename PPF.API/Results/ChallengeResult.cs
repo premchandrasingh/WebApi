@@ -18,12 +18,14 @@ namespace PPF.API.Results
         }
 
         public string LoginProvider { get; set; }
+
         public HttpRequestMessage Request { get; set; }
 
         public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
         {
             Request.GetOwinContext().Authentication.Challenge(LoginProvider);
 
+            //Challenge won’t fire unless our API sets the HTTP status code to 401 (Unauthorized),
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
             response.RequestMessage = Request;
             return Task.FromResult(response);

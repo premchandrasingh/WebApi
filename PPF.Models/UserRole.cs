@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace PPF.Models
 {
-    public class Role
+    public class UserRole
     {
-        public long Id { get; set; }
-
         public long UserId { get; set; }
 
-        public string Name { get; set; }
+        public long RoleId { get; set; }
     }
 }

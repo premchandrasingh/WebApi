@@ -33,10 +33,13 @@ namespace PPF.API
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie
             });
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+
+            //// Use a cookie to temporarily store information about a user logging in with a third party login provider
+            //// THIS SHOULD BE ENABLE IF YOUR APPLICAION HAS EXTERNAL(THIRD-PARTY) AUTHENTICATION
+            //app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Configure the application for OAuth based flow
-            PublicClientId = "selfV2";
+            PublicClientId = "PPF_API";
 
             var expiry = 30;
 
@@ -44,7 +47,7 @@ namespace PPF.API
             {
                 TokenEndpointPath = new PathString("/Token"),
                 Provider = new OAuthProvider(PublicClientId),
-                //AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
+                AuthorizeEndpointPath = new PathString("/api/ExternalLogins/ExternalLogin"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(expiry),
                 AllowInsecureHttp = true,
                 RefreshTokenProvider = new RefreshTokenProvider(),
@@ -52,29 +55,10 @@ namespace PPF.API
 
             // Enable the application to use bearer tokens to authenticate users
             app.UseOAuthBearerTokens(OAuthOptions);
+            
 
+            StartupExternalAuth.Configure(app);
 
-
-
-
-            // Uncomment the following lines to enable logging in with third party login providers
-            //app.UseMicrosoftAccountAuthentication(
-            //    clientId: "",
-            //    clientSecret: "");
-
-            //app.UseTwitterAuthentication(
-            //    consumerKey: "",
-            //    consumerSecret: "");
-
-            //app.UseFacebookAuthentication(
-            //    appId: "",
-            //    appSecret: "");
-
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
         }
     }
 
@@ -102,7 +86,7 @@ namespace PPF.API
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Configure the application for OAuth based flow
-            PublicClientId = "selfV2";
+            PublicClientId = "PPF_API";
 
             var issuer = "http://localhost:58714";
             var audience = "all";
